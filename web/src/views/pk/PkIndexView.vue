@@ -1,14 +1,12 @@
 <template>
-    <ContentField>
-        pk
-    </ContentField>
+    <PkMenu />
 </template>
 
 <script>
-import ContentField from "@/components/ContentField.vue"
+import PkMenu from "@/components/PkMenu.vue"
 export default{
     components: {
-        ContentField,
+        PkMenu,
     }
 }
 

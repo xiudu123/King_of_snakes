@@ -5,7 +5,8 @@ import RanklistIndexView from "@/views/ranklist/RanklistIndexView"
 import RecordIndexView from "@/views/record/RecordIndexView"
 import UserIndexView from "@/views/user/UserIndexView"
 import NotFound from "@/views/error/NotFound"
-
+import PkMoudleSingleView from "@/views/pk/PkMoudleSingleView"
+import PkMoudleDoubleView from "@/views/pk/PkMoudleDoubleView"
 const routes = [
   {
       path: "/",
@@ -21,6 +22,16 @@ const routes = [
       path: "/pk/",
       name: "pk_index",
       component: PkIndexView,
+  },
+  {
+      path: "/pk/single/",
+      name: "pk_single",
+      component: PkMoudleSingleView,
+  },
+  {
+      path: "/pk/double/",
+      name: "pk_double",
+      component: PkMoudleDoubleView,
   },
   {
       path: "/ranklist/",

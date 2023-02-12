@@ -11,7 +11,7 @@
                       <router-link class="nav-link" :class="route_name === 'home_index' ? 'active' : '' " :to = "{name: 'home_index'}">首页</router-link>
                     </li>
                     <li class="nav-item">
-                      <router-link class="nav-link" :class="route_name === 'pk_index' ? 'active' : '' " :to = "{name: 'pk_index'}">对战</router-link>
+                      <router-link class="nav-link" :class="(route_name === 'pk_index' || route_name === 'pk_single' || route_name === 'pk_double') ? 'active' : '' " :to = "{name: 'pk_index'}">对战</router-link>
                     </li>
                     <li class="nav-item">
                       <router-link class="nav-link" :class="route_name === 'record_index' ? 'active' : '' " :to = "{name: 'record_index'}">对局列表</router-link>
