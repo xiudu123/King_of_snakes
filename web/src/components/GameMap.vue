@@ -1,0 +1,40 @@
+<template>
+    <div ref="parent" class="gamemap">
+        <canvas ref="canvas" > </canvas>
+    </div>
+</template>
+
+<script>
+import { GameMapDouble } from "@/assets/script/GameMapDouble";
+import { GameMapSingle } from "@/assets/script/GameMapSingle";
+import { ref, onMounted } from 'vue';
+import { useStore } from "vuex";
+export default{
+    setup() {
+        let parent = ref(null);
+        let canvas = ref(null);
+        const store = useStore();
+        onMounted(() => {
+            if(store.state.pkMode.mode === "double") new GameMapDouble(canvas.value.getContext('2d'), parent.value);
+            if(store.state.pkMode.mode === "single") new GameMapSingle(canvas.value.getContext('2d'), parent.value);
+        })
+
+        return{
+            parent,
+            canvas
+        }
+    }
+}
+</script>
+
+
+<style scoped>
+.gamemap {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+</style>
+

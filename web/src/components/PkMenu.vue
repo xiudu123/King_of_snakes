@@ -8,14 +8,18 @@
 
 <script>
 import router from "@/router/index";
+import { useStore } from "vuex";
 export default{
     setup() {
+        const store = useStore();
         const open_single = () => {
+            store.commit("updateMoudle", "single");
             router.push({
                 name: "pk_single",
             })
         }
         const open_double = () => {
+            store.commit("updateMoudle", "double");
             router.push({
                 name: "pk_double",
             })
