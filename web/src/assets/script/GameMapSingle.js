@@ -11,20 +11,21 @@ export class GameMapSingle extends GameMap {
         let c = parseInt(Math.random() * (this.cols - 2) + 1);
         this.snake = new SnakesSingle({id: 0, color: "#4876ec", r: r, c: c, eye_direction: 0}, this);
         this.food = null;
+        this.directions = [];
     }
     add_listening_even(){
         this.ctx.canvas.focus();
-        const snake = this.snake;
         this.ctx.canvas.addEventListener("keydown", e => {
-            if(e.key === 'w') snake.set_diretion(0);
-            else if(e.key === 'a') snake.set_diretion(1);
-            else if(e.key === 's') snake.set_diretion(2);
-            else if(e.key === 'd') snake.set_diretion(3);
+            if(e.key === 'w') this.directions.push(0);
+            else if(e.key === 'a') this.directions.push(1);
+            else if(e.key === 's') this.directions.push(2);
+            else if(e.key === 'd') this.directions.push(3);
 
-            else if(e.key === "ArrowUp") snake.set_diretion(0);
-            else if(e.key === "ArrowLeft") snake.set_diretion(1);
-            else if(e.key === "ArrowDown") snake.set_diretion(2);
-            else if(e.key === "ArrowRight") snake.set_diretion(3);
+            else if(e.key === "ArrowUp") this.directions.push(0);
+            else if(e.key === "ArrowLeft") this.directions.push(1);
+            else if(e.key === "ArrowDown") this.directions.push(2);
+            else if(e.key === "ArrowRight") this.directions.push(3);
+            console.log(this.directions);
         });
     }
 
@@ -64,13 +65,17 @@ export class GameMapSingle extends GameMap {
     check_ready(){
         if(this.snake.status === "die") return false;
         if(this.snake.status !== "idle") return false;
-        if(this.snake.direction === -1 && this.snake.last_direction === -1) return false;
+        if(this.directions.length === 0 && this.snake.last_direction === -1) return false;
         return true;
     }
 
     update_gamemap(){
         if(this.check_ready()){
-            if(this.snake.direction === -1) this.snake.direction = this.snake.last_direction;
+            if(this.directions.length === 0) this.snake.direction = this.snake.last_direction;
+            else {
+                this.snake.direction = this.directions[0];
+                this.directions.splice(0);
+            }
             this.snake.last_direction = this.snake.direction;
             this.snake.next_step();
             if(this.check_eat_food(this.snake.cells[0])) {
