@@ -1,6 +1,6 @@
 <template>
     <div ref="parent" class="gamemap">
-        <canvas ref="canvas" > </canvas>
+        <canvas ref="canvas" tabindex="0"> </canvas>
     </div>
 </template>
 
@@ -16,7 +16,7 @@ export default{
         const store = useStore();
         onMounted(() => {
             if(store.state.pkMode.mode === "double") new GameMapDouble(canvas.value.getContext('2d'), parent.value);
-            if(store.state.pkMode.mode === "single") new GameMapSingle(canvas.value.getContext('2d'), parent.value);
+            if(store.state.pkMode.mode === "single") new GameMapSingle(canvas.value.getContext('2d'), parent.value, store);
         })
 
         return{

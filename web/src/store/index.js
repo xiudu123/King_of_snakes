@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
 import ModulePkmode from './pkMode'
+import ModulePkSingle from './pkSingle'
 export default createStore({
   state: {
   },
@@ -11,5 +12,6 @@ export default createStore({
   },
   modules: {
     pkMode: ModulePkmode,
+    pkSingle: ModulePkSingle,
   }
 })

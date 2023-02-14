@@ -1,12 +1,12 @@
 export default ({
     state: {
-        mode: "none",
+        score: 0,
     },
     getters: {
     },
     mutations: {
-        updateMoudle(state, mode){
-            state.mode = mode;
+        addScore(state, score){
+            state.score += score;
         }
     },
     actions: {

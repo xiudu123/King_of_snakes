@@ -4,7 +4,7 @@
 
 <script>
 import PlayGround from "@/components/PlayGround.vue"
-import { onMounted, onUnmounted } from "vue";
+import { onBeforeMount, onBeforeUnmount } from "vue";
 import { useStore } from "vuex";
 export default{
     components: {
@@ -13,14 +13,15 @@ export default{
 
     setup() {
         const store = useStore();
-        store.commit("updateMoudle", "double");
-        onMounted(() => {
-            
+
+        onBeforeMount(() => {
+            store.commit("updateMoudle", "double");
         }),
 
-        onUnmounted(() => {
-            store.commit("updateMoudle", "");
-        })
+        onBeforeUnmount(() => {
+            store.commit("updateMoudle", "none");
+        });
+
     }
 
 }

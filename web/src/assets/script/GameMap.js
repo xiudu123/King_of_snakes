@@ -31,6 +31,7 @@ export class GameMap extends AcGameObject{
                 if(this.g[r][c]) this.walls.push(new Wall(r, c, this));
             }
         }
+        // console.log(this.g);
     }
 
     start(){
