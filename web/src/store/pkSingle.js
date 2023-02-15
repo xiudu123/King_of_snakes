@@ -7,6 +7,9 @@ export default ({
     mutations: {
         addScore(state, score){
             state.score += score;
+        },
+        setScore(state, score){
+            state.score = score;  
         }
     },
     actions: {

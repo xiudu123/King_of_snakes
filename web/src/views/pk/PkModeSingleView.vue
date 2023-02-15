@@ -19,6 +19,7 @@ export default{
         const store = useStore();
         onBeforeMount(() => {
             store.commit("updateMoudle", "single");
+            store.commit("setScore", 0);
         })
 
         onBeforeUnmount(() => {
