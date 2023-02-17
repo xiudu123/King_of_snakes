@@ -1,6 +1,6 @@
-package com.kos.backend.controller;
+package com.kos.backend.controller.user.account;
 
-import com.kos.backend.service.user.GetInfoService;
+import com.kos.backend.service.user.account.GetInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

@@ -1,8 +1,7 @@
-package com.kos.backend.controller;
+package com.kos.backend.controller.user.account;
 
-import com.kos.backend.service.user.RegisterService;
+import com.kos.backend.service.user.account.RegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;

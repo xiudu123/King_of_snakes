@@ -1,8 +1,8 @@
-package com.kos.backend.service.impl.user;
+package com.kos.backend.service.impl.user.account;
 
 import com.kos.backend.pojo.User;
 import com.kos.backend.service.impl.utils.UserDetailsImpl;
-import com.kos.backend.service.user.LoginService;
+import com.kos.backend.service.user.account.LoginService;
 import com.kos.backend.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;

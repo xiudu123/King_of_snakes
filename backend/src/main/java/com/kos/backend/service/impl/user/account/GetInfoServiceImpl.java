@@ -1,8 +1,8 @@
-package com.kos.backend.service.impl.user;
+package com.kos.backend.service.impl.user.account;
 
 import com.kos.backend.pojo.User;
 import com.kos.backend.service.impl.utils.UserDetailsImpl;
-import com.kos.backend.service.user.GetInfoService;
+import com.kos.backend.service.user.account.GetInfoService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ public class GetInfoServiceImpl implements GetInfoService {
         map.put("username", user.getUsername());
         map.put("photo", user.getPhoto());
         map.put("rating", user.getRating().toString());
-        map.put("score", user.getScores().toString());
+        map.put("scores", user.getScores().toString());
         return map;
     }
 }

@@ -3,12 +3,14 @@ import HomeIndexView from "@/views/home/HomeIndexView"
 import PkIndexView from "@/views/pk/PkIndexView"
 import RanklistIndexView from "@/views/ranklist/RanklistIndexView"
 import RecordIndexView from "@/views/record/RecordIndexView"
-import UserIndexView from "@/views/user/UserIndexView"
+import UserSpaceIndexView from "@/views/user/space/UserSpaceIndexView"
 import NotFound from "@/views/error/NotFound"
 import PkModeSingleView from "@/views/pk/PkModeSingleView"
 import PkModeDoubleView from "@/views/pk/PkModeDoubleView"
-import UserLoginView from "@/views/user/UserLoginView"
-import UserRegisterView from "@/views/user/UserRegisterView"
+import UserLoginView from "@/views/user/account/UserLoginView"
+import UserRegisterView from "@/views/user/account/UserRegisterView"
+import UserSpacePkSingleView from "@/views/user/space/UserSpacePkSingleView"
+import UserSpacePkDoubleView from "@/views/user/space/UserSpacePkDoubleView"
 
 import store from "@/store/index"
 const routes = [
@@ -69,12 +71,36 @@ const routes = [
       }
   },
   {
-      path: "/user/",
-      name: "user_index",
-      component: UserIndexView,
+    path: "/user/space/",
+    name: "user_index",
+    component: UserSpaceIndexView,
+    meta: {
+      requestAuth: true,
+    }
+  },
+  {
+      path: "/user/space/space/",
+      name: "user_space_space",
+      component: UserSpaceIndexView,
       meta: {
         requestAuth: true,
       }
+  },
+  {
+    path: "/user/space/pksingle/",
+    name: "user_space_pksingle",
+    component: UserSpacePkSingleView,
+    meta: {
+      requestAuth: true,
+    }
+  },
+  {
+    path: "/user/space/pkdouble/",
+    name: "user_space_pkdouble",
+    component: UserSpacePkDoubleView,
+    meta: {
+      requestAuth: true,
+    }
   },
   {
       path: "/user/login/",
@@ -115,17 +141,20 @@ router.beforeEach((to, from, next) => {
     if(!store.state.user.is_login && localStorage.getItem("jwt_token")){
         store.commit("updateToken", localStorage.getItem("jwt_token"));
         store.dispatch("updateInfo", {
-            success(){
-                store.commit("updatePulling", false);
-                console.log(11);
-            }
+            success(){},
+            error(){}
         });
+        store.commit("updatePulling", false);
         next();
     }
     else if(to.meta.requestAuth && !store.state.user.is_login){
         store.commit("update_view", to.name);
+        store.commit("updatePulling", false);
         next({name: "user_login"});
-    }else next();
+    }else {
+      store.commit("updatePulling", false);
+      next();
+    }
 })
 
 export default router

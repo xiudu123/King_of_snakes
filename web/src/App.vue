@@ -70,7 +70,13 @@ export default{
 </script>
 <style>
 body{
+  width: 100%;
+  height: 100%;
   background: url("@/assets/image/Saito_Asuka.jpg");
   background-size: cover;
+  position: absolute;
+  z-index: -1;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 </style>
