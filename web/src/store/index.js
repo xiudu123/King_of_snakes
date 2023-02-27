@@ -1,7 +1,8 @@
 import { createStore } from 'vuex'
 import ModulePkmode from './pkMode'
 import ModulePkSingle from './pkSingle'
-import ModuleUser from "./User"
+import ModulePkDouble from './pkDouble'
+import ModuleUser from "./user"
 import ModuleViews from "./views"
 export default createStore({
   state: {
@@ -15,6 +16,7 @@ export default createStore({
   modules: {
     pkMode: ModulePkmode,
     pkSingle: ModulePkSingle,
+    pkDouble: ModulePkDouble,
     user: ModuleUser,
     views: ModuleViews,
   }
