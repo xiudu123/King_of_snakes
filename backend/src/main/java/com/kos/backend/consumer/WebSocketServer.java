@@ -1,9 +1,10 @@
 package com.kos.backend.consumer;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.kos.backend.consumer.utils.GameMapDouble;
+import com.kos.backend.consumer.utils.game.GameMapDouble;
 import com.kos.backend.consumer.utils.JwtAuthentication;
 import com.kos.backend.consumer.utils.MatchingPool;
+import com.kos.backend.consumer.utils.game.GameMapSingle;
 import com.kos.backend.mapper.UserMapper;
 import com.kos.backend.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,14 +69,14 @@ public class WebSocketServer {
 
 
             JSONObject respA = new JSONObject();
-            respA.put("event", "start-matching");
+            respA.put("event", "start-matching-double");
             respA.put("opponent_username", playerB.getUsername());
             respA.put("opponent_photo", playerB.getPhoto());
             respA.put("game_map", gameMapDouble.getG());
             users.get(playerA.getId()).SendMessage(respA.toJSONString());
 
             JSONObject respB = new JSONObject();
-            respB.put("event", "start-matching");
+            respB.put("event", "start-matching-double");
             respB.put("opponent_username", playerA.getUsername());
             respB.put("opponent_photo", playerA.getPhoto());
             respB.put("game_map", gameMapDouble.getG());
@@ -91,6 +92,19 @@ public class WebSocketServer {
         System.out.println("stop Matching");
     }
 
+    private void move(int direction){
+
+    }
+
+    void startGameSingle(){
+        GameMapSingle gameMapSingle = new GameMapSingle(13, 14);
+        gameMapSingle.createMap();
+        JSONObject object = new JSONObject();
+        object.put("game_map", gameMapSingle.getG());
+        object.put("event", "start-game-single");
+        SendMessage(object.toJSONString());
+    }
+
     @OnMessage
     public void onMessage(String message, Session session) {
         // 从Client接收消息
@@ -98,10 +112,12 @@ public class WebSocketServer {
         JSONObject data = JSONObject.parseObject(message);
 
         String event = data.getString("event");
-        if("start-matching".equals(event)){
+        if("start-matching-double".equals(event)){
             startMatching();
-        }else if("stop-matching".equals(event)){
+        }else if("stop-matching-double".equals(event)){
             stopMatching();
+        }else if("start-game-single".equals(event)){
+            startGameSingle();
         }
     }
 

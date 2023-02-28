@@ -6,8 +6,6 @@ export class GameMapDouble extends GameMap {
     constructor(ctx, parent, store){
         super(ctx, parent);
         this.store = store;
-        this.inner_walls_count = parseInt(Math.random() * 30) + 10;     
-        // this.inner_walls_count = 0;   
 
         this.snakes = [
             new SnakesDouble({id: 0, color: "#4876ec", r: this.rows - 2, c: 1, eye_direction: 0}, this),

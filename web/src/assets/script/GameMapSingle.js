@@ -16,20 +16,27 @@ export class GameMapSingle extends GameMap {
     add_listening_even(){
         this.ctx.canvas.focus();
         this.ctx.canvas.addEventListener("keydown", e => {
-            if(e.key === 'w') this.directions.push(0);
-            else if(e.key === 'a') this.directions.push(1);
-            else if(e.key === 's') this.directions.push(2);
-            else if(e.key === 'd') this.directions.push(3);
+            let d = -1;
+            if(e.key === 'w') d = 0;
+            else if(e.key === 'a') d = 1;
+            else if(e.key === 's') d = 2;
+            else if(e.key === 'd') d = 3;
 
-            else if(e.key === "ArrowUp") this.directions.push(0);
-            else if(e.key === "ArrowLeft") this.directions.push(1);
-            else if(e.key === "ArrowDown") this.directions.push(2);
-            else if(e.key === "ArrowRight") this.directions.push(3);
-            console.log(this.directions);
+            else if(e.key === "ArrowUp") d = 0;
+            else if(e.key === "ArrowLeft") d = 1;
+            else if(e.key === "ArrowDown") d = 2;
+            else if(e.key === "ArrowRight") d = 3;
+            if(d >= 0){
+                this.store.state.pkSingle.socket.send(JSON.stringify({
+                    event: "move",
+                    direction: d,
+                }));
+            }
         });
     }
 
     start_gamemap(){
+        this.g = this.store.state.pkSingle.game_map;
         this.add_listening_even();
     }
 
@@ -38,7 +45,7 @@ export class GameMapSingle extends GameMap {
             let gg = [];
             for(let r = 0; r < this.rows; ++ r){
                 for(let c = 0; c < this.cols; ++ c){
-                    if(!this.g[r][c]) gg.push(new Cell(r, c));
+                    if(this.g[r][c] == 0) gg.push(new Cell(r, c));
                 }
             }
             if(gg.length >= 1){
@@ -70,6 +77,7 @@ export class GameMapSingle extends GameMap {
     }
 
     update_gamemap(){
+        this.g = this.store.state.pkSingle.game_map;
         if(this.check_ready()){
             if(this.directions.length === 0) this.snake.direction = this.snake.last_direction;
             else {
@@ -84,7 +92,6 @@ export class GameMapSingle extends GameMap {
             }
         }
         
-        this.check_food_exist();
     }
 
 }

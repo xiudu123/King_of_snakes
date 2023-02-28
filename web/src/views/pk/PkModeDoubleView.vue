@@ -30,12 +30,13 @@ export default{
             
             socket.onopen = () => { // 当链接成功建立执行;
                 console.log("connected!");
-                store.commit("updateSocket", socket);
+                store.commit("updateSocketDouble", socket);
             },
             socket.onmessage = msg => { // 当成功接受信息时执行;
                 const data = JSON.parse(msg.data);
                 console.log("receive message!");
-                if(data.event === "start-matching"){
+                console.log(data);
+                if(data.event === "start-matching-double"){
                     store.commit("updateOpponent", {
                         username: data.opponent_username,
                         photo: data.opponent_photo,
@@ -43,7 +44,6 @@ export default{
                     store.commit("updateGame", {
                         game_map: data.game_map,
                     });
-                    console.log(data.game_map);
                     setTimeout(() => {
                         store.commit("updateStatus", "playing");
                     }, 2000);

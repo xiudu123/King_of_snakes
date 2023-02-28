@@ -35,12 +35,12 @@ export default {
             if(match_btn_info.value === "开始匹配"){
                 match_btn_info.value = "取消匹配";
                 store.state.pkDouble.socket.send(JSON.stringify({
-                    event: "start-matching"
+                    event: "start-matching-double"
                 }));
             }else if(match_btn_info.value === "取消匹配") {
                 match_btn_info.value = "开始匹配";
                 store.state.pkDouble.socket.send(JSON.stringify({
-                    event: "stop-matching",
+                    event: "stop-matching-double",
                 }));
             }
         }

@@ -10,7 +10,7 @@ export default ({
         
     },
     mutations: {
-        updateSocket(state, socket){
+        updateSocketDouble(state, socket){
             state.socket = socket;
         },
         updateOpponent(state, opponent){

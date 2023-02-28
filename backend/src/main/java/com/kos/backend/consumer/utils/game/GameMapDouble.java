@@ -1,4 +1,4 @@
-package com.kos.backend.consumer.utils;
+package com.kos.backend.consumer.utils.game;
 
 import java.util.Random;
 
@@ -12,13 +12,13 @@ public class GameMapDouble extends GameMap{
 
     private Boolean check_connectivity(int sx, int sy, int tx, int ty){ // 判断两起点是否连通;
         if(sx == tx && sy == ty) return true;
-        g[sx][sy] = true;
+        g[sx][sy] = 1;
         for(int i = 0; i < 4; ++ i){
             int x = sx + dir[i][0];
             int y = sy + dir[i][1];
-            if(x >= 0 && x < this.rows && y >= 0 && y < this.cols && !g[x][y]){
+            if(x >= 0 && x < this.rows && y >= 0 && y < this.cols && g[x][y] == 0){
                 if(check_connectivity(x, y, tx, ty)){
-                    g[sx][sy] = false;
+                    g[sx][sy] = 0;
                     return true;
                 }
             }
@@ -35,10 +35,10 @@ public class GameMapDouble extends GameMap{
                 int r = random.nextInt(this.rows);
                 int c = random.nextInt(this.cols);
 
-                if(this.g[r][c] || this.g[this.rows - 1 - r][this.cols - 1 - c]) continue;// this.rows, this.cols, this.g均继承自基类;
+                if(this.g[r][c] == 1 || this.g[this.rows - 1 - r][this.cols - 1 - c] == 1) continue;// this.rows, this.cols, this.g均继承自基类;
                 if((r == this.rows - 2 && c == 1) || (r == 1 && c == this.cols - 2)) continue; // 排除起点;
 
-                this.g[r][c] = this.g[this.rows - 1 - r][this.cols - 1 - c] = true;
+                this.g[r][c] = this.g[this.rows - 1 - r][this.cols - 1 - c] = 1;
                 break;
             }
         }
@@ -50,7 +50,7 @@ public class GameMapDouble extends GameMap{
             if(this.create_walls()) break;
         }
     }
-    public Boolean[][] getG(){
+    public int[][] getG(){
         return this.g;
     }
 
