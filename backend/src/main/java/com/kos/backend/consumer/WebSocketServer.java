@@ -1,6 +1,7 @@
 package com.kos.backend.consumer;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.kos.backend.consumer.utils.GameMapDouble;
 import com.kos.backend.consumer.utils.JwtAuthentication;
 import com.kos.backend.consumer.utils.MatchingPool;
 import com.kos.backend.mapper.UserMapper;
@@ -62,16 +63,22 @@ public class WebSocketServer {
             List<User> player = matchingPool.startGamePlayer();
             User playerA = player.get(0), playerB = player.get(1);
 
+            GameMapDouble gameMapDouble = new GameMapDouble(13, 14);
+            gameMapDouble.createMap();;
+
+
             JSONObject respA = new JSONObject();
             respA.put("event", "start-matching");
             respA.put("opponent_username", playerB.getUsername());
             respA.put("opponent_photo", playerB.getPhoto());
+            respA.put("game_map", gameMapDouble.getG());
             users.get(playerA.getId()).SendMessage(respA.toJSONString());
 
             JSONObject respB = new JSONObject();
             respB.put("event", "start-matching");
             respB.put("opponent_username", playerA.getUsername());
             respB.put("opponent_photo", playerA.getPhoto());
+            respB.put("game_map", gameMapDouble.getG());
             users.get(playerB.getId()).SendMessage(respB.toJSONString());
         }
     }
