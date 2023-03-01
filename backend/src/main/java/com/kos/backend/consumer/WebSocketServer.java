@@ -1,10 +1,10 @@
 package com.kos.backend.consumer;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.kos.backend.consumer.utils.game.GameMapDouble;
+import com.kos.backend.consumer.utils.game.map.GameMapDouble;
 import com.kos.backend.consumer.utils.JwtAuthentication;
-import com.kos.backend.consumer.utils.MatchingPool;
-import com.kos.backend.consumer.utils.game.GameMapSingle;
+import com.kos.backend.consumer.utils.game.MatchingPool;
+import com.kos.backend.consumer.utils.game.map.GameMapSingle;
 import com.kos.backend.mapper.UserMapper;
 import com.kos.backend.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +21,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @ServerEndpoint("/websocket/{token}")  // 注意不要以'/'结尾
 public class WebSocketServer {
 
-    private static final ConcurrentHashMap<Integer, WebSocketServer> users = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<Integer, WebSocketServer> users = new ConcurrentHashMap<>();
     private static final MatchingPool matchingPool = new MatchingPool();
     private User user;
     static private UserMapper userMapper;
     private Session session = null;
+    private GameMapSingle gameMapSingle;
     @Autowired
     private void setUserMapper(UserMapper userMapper){
         WebSocketServer.userMapper = userMapper;
@@ -65,8 +66,7 @@ public class WebSocketServer {
             User playerA = player.get(0), playerB = player.get(1);
 
             GameMapDouble gameMapDouble = new GameMapDouble(13, 14);
-            gameMapDouble.createMap();;
-
+            gameMapDouble.createMap();
 
             JSONObject respA = new JSONObject();
             respA.put("event", "start-matching-double");
@@ -92,23 +92,35 @@ public class WebSocketServer {
         System.out.println("stop Matching");
     }
 
-    private void move(int direction){
-
-    }
-
     void startGameSingle(){
-        GameMapSingle gameMapSingle = new GameMapSingle(13, 14);
+        GameMapSingle gameMapSingle = new GameMapSingle(user.getId(), 13, 14);
         gameMapSingle.createMap();
+
+        this.gameMapSingle = gameMapSingle;
+        gameMapSingle.start();
+
         JSONObject object = new JSONObject();
         object.put("game_map", gameMapSingle.getG());
         object.put("event", "start-game-single");
+        object.put("food_x", gameMapSingle.getFood().getX());
+        object.put("food_y", gameMapSingle.getFood().getY());
+        object.put("sx", gameMapSingle.getPlayer().getSx());
+        object.put("sy", gameMapSingle.getPlayer().getSy());
         SendMessage(object.toJSONString());
+    }
+
+    void moveSingle(int d){
+        this.gameMapSingle.setNextStep(d);
+    }
+
+    void get_run(){
+        this.gameMapSingle.get_run();
     }
 
     @OnMessage
     public void onMessage(String message, Session session) {
         // 从Client接收消息
-        System.out.println("receive message!");
+//        System.out.println("receive message!");
         JSONObject data = JSONObject.parseObject(message);
 
         String event = data.getString("event");
@@ -118,6 +130,11 @@ public class WebSocketServer {
             stopMatching();
         }else if("start-game-single".equals(event)){
             startGameSingle();
+        }else if("move-single".equals(event)){
+            moveSingle(data.getInteger("direction"));
+        }else if("next-move-single".equals(event)){
+//            System.out.println("!!");
+            get_run();
         }
     }
 

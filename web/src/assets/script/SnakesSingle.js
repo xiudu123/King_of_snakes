@@ -1,14 +1,15 @@
 import { Snakes } from "./Snakes";
 export class SnakesSingle extends Snakes{
-    constructor(info, gamemap){
+    constructor(info, store, gamemap){
         super(info, gamemap);
         this.last_direction = this.direction;
         this.eat_food = false;
+        this.store = store;
         this.gamemap = gamemap;
     }
 
     check_tail_increasing(){
-        if(this.gamemap.check_eat_food(this.next_cell)) {
+        if(this.store.state.pkSingle.increasing) {
             return true;
         }
         return false;

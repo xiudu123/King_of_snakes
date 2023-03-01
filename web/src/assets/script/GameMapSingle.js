@@ -1,4 +1,4 @@
-import { Cell } from "./Cell";
+// import { Cell } from "./Cell";
 import { Food } from "./food";
 import { GameMap } from "./GameMap";
 import { SnakesSingle } from "./SnakesSingle";
@@ -7,12 +7,19 @@ export class GameMapSingle extends GameMap {
         super(ctx, parent);
         this.ctx = ctx;
         this.store = store;
-        let r = parseInt(Math.random() * (this.rows - 2) + 1);
-        let c = parseInt(Math.random() * (this.cols - 2) + 1);
-        this.snake = new SnakesSingle({id: 0, color: "#4876ec", r: r, c: c, eye_direction: 0}, this);
+
+        this.snake = new SnakesSingle({id: 0, 
+            color: "#4876ec", 
+            r: store.state.pkSingle.sx, 
+            c: store.state.pkSingle.sy, 
+            eye_direction: 0}, 
+            store,
+            this);
+
         this.food = null;
         this.directions = [];
     }
+
     add_listening_even(){
         this.ctx.canvas.focus();
         this.ctx.canvas.addEventListener("keydown", e => {
@@ -28,7 +35,7 @@ export class GameMapSingle extends GameMap {
             else if(e.key === "ArrowRight") d = 3;
             if(d >= 0){
                 this.store.state.pkSingle.socket.send(JSON.stringify({
-                    event: "move",
+                    event: "move-single",
                     direction: d,
                 }));
             }
@@ -37,61 +44,52 @@ export class GameMapSingle extends GameMap {
 
     start_gamemap(){
         this.g = this.store.state.pkSingle.game_map;
+        this.food = new Food(this.store.state.pkSingle.food_x, this.store.state.pkSingle.food_y, this);
         this.add_listening_even();
     }
 
-    check_food_exist(){
-        if(this.food === null){
-            let gg = [];
-            for(let r = 0; r < this.rows; ++ r){
-                for(let c = 0; c < this.cols; ++ c){
-                    if(this.g[r][c] == 0) gg.push(new Cell(r, c));
-                }
-            }
-            if(gg.length >= 1){
-                let x = parseInt(Math.random() * (gg.length - 1));
-                this.food = new Food(gg[x].r, gg[x].c, this);
-            }
-        }
-    }
-
-
-    add_score(){
-        this.store.commit("addScore", 10);
-        console.log(this.store.state.pkSingle.score);
-    }
-
-    check_eat_food(cell){
-        if(cell.r === this.food.r && cell.c === this.food.c) return true;
-        return false;
-    }
     destoer_food(){
         this.food.destory();
         this.food = null;
     }
+
+    render_food(){
+        if(this.store.state.pkSingle.increasing){
+            this.destoer_food();
+            this.food = new Food(this.store.state.pkSingle.food_x, this.store.state.pkSingle.food_y, this);
+        }
+    }
+
     check_ready(){
-        if(this.snake.status === "die") return false;
         if(this.snake.status !== "idle") return false;
-        if(this.directions.length === 0 && this.snake.last_direction === -1) return false;
+        if(this.store.state.pkSingle.direction !== -1) return false;
         return true;
     }
 
+
     update_gamemap(){
-        this.g = this.store.state.pkSingle.game_map;
+        // this.g = this.store.state.pkSingle.game_map;
         if(this.check_ready()){
-            if(this.directions.length === 0) this.snake.direction = this.snake.last_direction;
-            else {
-                this.snake.direction = this.directions[0];
-                this.directions.splice(0);
-            }
-            this.snake.last_direction = this.snake.direction;
-            this.snake.next_step();
-            if(this.check_eat_food(this.snake.cells[0])) {
-                this.destoer_food();
-                this.add_score();
-            }
+            // if(this.directions.length === 0) this.snake.direction = this.snake.last_direction;
+            // else {
+            //     this.snake.direction = this.directions[0];
+            //     this.directions.splice(0);
+            // }
+            // this.snake.last_direction = this.snake.direction;
+            // this.snake.next_step();
+            this.store.state.pkSingle.socket.send(JSON.stringify({
+                event: "next-move-single",
+            }));
+            
         }
-        
+
+        if(this.store.state.pkSingle.direction !== -1) {
+            this.snake.direction = this.store.state.pkSingle.direction;
+            
+            this.render_food();
+            this.snake.next_step();
+            this.store.commit("updateDirection", -1);
+        }
     }
 
 }

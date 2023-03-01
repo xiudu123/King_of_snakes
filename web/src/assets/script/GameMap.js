@@ -1,5 +1,4 @@
 import { AcGameObject } from "./AcGameObject";
-import { Food } from "./food";
 import { Wall } from "./Wall";
 export class GameMap extends AcGameObject{
     constructor(ctx, parent){
@@ -17,7 +16,6 @@ export class GameMap extends AcGameObject{
         for(let r = 0; r < this.rows; ++ r){
             for(let c = 0; c < this.cols; ++ c){
                 if(this.g[r][c] == 1) this.walls.push(new Wall(r, c, this));
-                else if(this.g[r][c] == 2) new Food(r, c, this);
             }
         }
     }

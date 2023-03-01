@@ -1,8 +1,8 @@
-package com.kos.backend.consumer.utils.game;
+package com.kos.backend.consumer.utils.game.map;
 
 import java.util.Random;
 
-public class GameMapDouble extends GameMap{
+public class GameMapDouble extends GameMapBase {
     private final Integer inner_walls_count;
     public GameMapDouble(Integer rows, Integer cols) {
         super(rows, cols);

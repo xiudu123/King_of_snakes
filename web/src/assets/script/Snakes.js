@@ -36,7 +36,7 @@ export class Snakes extends AcGameObject{
     }
 
     start(){
-        this.gamemap.g[this.cells[0].r][this.cells[0].c] = true;
+        this.gamemap.g[this.cells[0].r][this.cells[0].c] = 3;
     }
 
     set_diretion(d){
@@ -44,7 +44,7 @@ export class Snakes extends AcGameObject{
     }
 
     check_valid(cell){
-        return !this.gamemap.g[cell.r][cell.c];
+        return this.gamemap.g[cell.r][cell.c] != 1;
     }
 
     next_step(){
@@ -73,10 +73,10 @@ export class Snakes extends AcGameObject{
         if(distance < this.eps) {
             this.cells[0] = this.next_cell;
             this.status = "idle";
-            this.gamemap.g[this.cells[0].r][this.cells[0].c] = true;
+            this.gamemap.g[this.cells[0].r][this.cells[0].c] = 3;
             if(!increasing_flag) {
                 const k = this.cells.length;
-                this.gamemap.g[this.cells[k - 1].r][this.cells[k - 1].c] = false;
+                this.gamemap.g[this.cells[k - 1].r][this.cells[k - 1].c] = 0;
                 this.cells.pop();
             }
             this.next_cell = null;
