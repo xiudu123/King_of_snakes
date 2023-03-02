@@ -10,7 +10,14 @@ import java.util.concurrent.CopyOnWriteArraySet;
 public class MatchingPool {
     private final CopyOnWriteArraySet<User> matchPool = new CopyOnWriteArraySet<>();
 
-    public void addPlayer(User user){matchPool.add(user);}
+    public void addPlayer(User user){
+        matchPool.add(user);
+        if (playerSize() >= 2){
+            List<User> list = startGamePlayer();
+            User playerA = list.get(0), playerB = list.get(1);
+            GameDouble.startGame(playerA, playerB);
+        }
+    }
 
     public void removePlayer(User user){
         matchPool.remove(user);
@@ -28,5 +35,7 @@ public class MatchingPool {
         list.add(b);
         return list;
     }
-
+    public Boolean contains(User user){
+        return matchPool.contains(user);
+    }
 }

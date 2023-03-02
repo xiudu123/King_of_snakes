@@ -1,4 +1,3 @@
-// import { Cell } from "./Cell";
 import { Food } from "./food";
 import { GameMap } from "./GameMap";
 import { SnakesSingle } from "./SnakesSingle";
@@ -7,7 +6,8 @@ export class GameMapSingle extends GameMap {
         super(ctx, parent);
         this.ctx = ctx;
         this.store = store;
-
+        this.rows = store.state.pkSingle.map_rows;
+        this.cols = store.state.pkSingle.map_cols;
         this.snake = new SnakesSingle({id: 0, 
             color: "#4876ec", 
             r: store.state.pkSingle.sx, 
@@ -17,7 +17,6 @@ export class GameMapSingle extends GameMap {
             this);
 
         this.food = null;
-        this.directions = [];
     }
 
     add_listening_even(){
@@ -62,33 +61,21 @@ export class GameMapSingle extends GameMap {
 
     check_ready(){
         if(this.snake.status !== "idle") return false;
-        if(this.store.state.pkSingle.direction !== -1) return false;
+        if(this.snake.direction !== -1) return false;
         return true;
     }
 
-
     update_gamemap(){
-        // this.g = this.store.state.pkSingle.game_map;
         if(this.check_ready()){
-            // if(this.directions.length === 0) this.snake.direction = this.snake.last_direction;
-            // else {
-            //     this.snake.direction = this.directions[0];
-            //     this.directions.splice(0);
-            // }
-            // this.snake.last_direction = this.snake.direction;
-            // this.snake.next_step();
             this.store.state.pkSingle.socket.send(JSON.stringify({
                 event: "next-move-single",
             }));
-            
         }
 
-        if(this.store.state.pkSingle.direction !== -1) {
-            this.snake.direction = this.store.state.pkSingle.direction;
-            
+        if(this.snake.direction !== -1) {
             this.render_food();
             this.snake.next_step();
-            this.store.commit("updateDirection", -1);
+            this.snake.direction = -1;
         }
     }
 

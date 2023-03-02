@@ -22,7 +22,6 @@ export class GameMap extends AcGameObject{
 
     start(){
         this.start_gamemap();
-        console.log(this.g);
         this.render_walls();
     }
 

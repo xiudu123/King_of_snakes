@@ -15,17 +15,25 @@ export class GameMapDouble extends GameMap {
 
     add_listening_even(){
         this.ctx.canvas.focus();
-        const [snake0, snake1] = this.snakes;
         this.ctx.canvas.addEventListener("keydown", e => {
-            if(e.key === 'w') snake0.set_diretion(0);
-            else if(e.key === 'a') snake0.set_diretion(1);
-            else if(e.key === 's') snake0.set_diretion(2);
-            else if(e.key === 'd') snake0.set_diretion(3);
+            let d = -1;
+            if(e.key === 'w') d = 0;
+            else if(e.key === 'a') d = 1;
+            else if(e.key === 's') d = 2;
+            else if(e.key === 'd') d = 3;
 
-            else if(e.key === "ArrowUp") snake1.set_diretion(0);
-            else if(e.key === "ArrowLeft") snake1.set_diretion(1);
-            else if(e.key === "ArrowDown") snake1.set_diretion(2);
-            else if(e.key === "ArrowRight") snake1.set_diretion(3);
+            else if(e.key === "ArrowUp") d = 0;
+            else if(e.key === "ArrowLeft") d = 1;
+            else if(e.key === "ArrowDown") d = 2;
+            else if(e.key === "ArrowRight") d = 3;
+            
+            if(d >= 0){
+                console.log(d);
+                this.store.state.pkDouble.socket.send(JSON.stringify({
+                    event: "move-double",
+                    direction: d,
+                }));
+            }
         });
     }
 
@@ -39,10 +47,9 @@ export class GameMapDouble extends GameMap {
             if(snake.status !== "idle") return false;
             if(snake.direction === -1) return false;
         }
+        
         return true;
     }
-
-    
 
     next_step(){
         for(const snake of this.snakes){

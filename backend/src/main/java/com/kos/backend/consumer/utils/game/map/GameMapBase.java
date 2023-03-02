@@ -4,12 +4,7 @@ public class GameMapBase extends Thread{
     protected final Integer rows;
     protected final Integer cols;
     protected final int[][] g;
-    protected int[][] dir = {
-            {-1, 0}, // 上;
-            {0, 1}, // 右;
-            {1, 0}, // 下;
-            {0, -1}, // 左;
-    };
+
     GameMapBase(Integer rows, Integer cols){
         this.rows = rows;
         this.cols = cols;

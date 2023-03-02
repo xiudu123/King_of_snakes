@@ -35,6 +35,7 @@ export default{
             socket.onmessage = msg => { // 当成功接受信息时执行;
                 const data = JSON.parse(msg.data);
                 console.log("receive message!");
+                const game = store.state.pkDouble.gameObjectDouble;
                 console.log(data);
                 if(data.event === "start-matching-double"){
                     store.commit("updateOpponent", {
@@ -44,10 +45,21 @@ export default{
                     store.commit("updateGame", {
                         game_map: data.game_map,
                     });
+                    // store.commit("updateStatus", "wait");
                     setTimeout(() => {
                         store.commit("updateStatus", "playing");
                     }, 2000);
-                    
+                }else if(data.event === "move-double"){
+                    const [snake0, snake1] = game.snakes;
+                    snake0.set_diretion(data.a_direction);
+                    snake0.set_increasing(data.a_increasing);
+                    snake1.set_diretion(data.b_direction);
+                    snake1.set_increasing(data.b_increasing);
+                }else if(data.event === "result-double"){
+                    const [snake0, snake1] = game.snakes;
+                    if(data.loser === "all" || data.loser === "A") snake0.status = "die";
+                    if(data.loser === "all" || data.loser === "B") snake1.status = "die";
+                    store.commit("updateLoser", data.loser);
                 }
             },
             socket.onclose = () => { // 当链接关闭时执行的函数;

@@ -15,8 +15,17 @@ export default{
         let canvas = ref(null);
         const store = useStore();
         onMounted(() => {
-            if(store.state.pkMode.mode === "double") new GameMapDouble(canvas.value.getContext('2d'), parent.value, store);
-            if(store.state.pkMode.mode === "single") new GameMapSingle(canvas.value.getContext('2d'), parent.value, store);
+            if(store.state.pkMode.mode === "double") {
+                store.commit("updateGameObjectDouble", 
+                    new GameMapDouble(canvas.value.getContext('2d'), parent.value, store)
+                )
+                console.log(store.state.pkDouble.gameObjectDouble);
+            }
+            else if(store.state.pkMode.mode === "single") {
+                store.commit("updateGameObjectSingle", 
+                    new GameMapSingle(canvas.value.getContext('2d'), parent.value, store)
+                )
+            }
         })
 
         return{

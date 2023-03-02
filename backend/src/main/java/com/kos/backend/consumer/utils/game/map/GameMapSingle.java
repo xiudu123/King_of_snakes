@@ -18,8 +18,10 @@ public class GameMapSingle extends GameMapBase{
     private final ReentrantLock lock = new ReentrantLock();
     private String status = "playing";
     private final Random random = new Random();
+    private final List<Integer> directions = new ArrayList<>();
     public GameMapSingle(Integer id, Integer rows, Integer cols) {
         super(rows, cols);
+
         food = null;
 
         // 初始蛇的位置;
@@ -35,11 +37,14 @@ public class GameMapSingle extends GameMapBase{
     public Cell getFood(){
         return food;
     }
+    public int[][] getG(){
+        return this.g;
+    } // 0空地, 1墙, 2蛇, 3食物;
 
     public void setNextStep(int nextStep){ // 设置蛇的下一个方向;
         lock.lock();
         try{
-            this.nextStep = nextStep;
+            directions.add(nextStep);
         }finally {
             lock.unlock();
         }
@@ -56,13 +61,13 @@ public class GameMapSingle extends GameMapBase{
             if(list.size() >= 1){
                 int x = random.nextInt(list.size());
                 food = list.get(x);
-                this.g[food.getX()][food.getY()] = 2;
+                this.g[food.getX()][food.getY()] = 3;
             }
         }
     }
 
     private Boolean checkEatFood(Cell cell){
-        return this.g[cell.getX()][cell.getY()] == 2;
+        return this.g[cell.getX()][cell.getY()] == 3;
     }
 
     private void destroyFood(){
@@ -73,14 +78,17 @@ public class GameMapSingle extends GameMapBase{
         super.create_walled();
         placeFood();
     }
-    public int[][] getG(){
-        return this.g;
-    } // 0空地, 1墙, 2食物, 3蛇;
+
 
     private boolean getNextStep(){ // 是否获取下一步操作;
         lock.lock();
         try{
-            if(nextStep == -1 && lastStep != -1) { nextStep = lastStep; }
+            if(directions.size() == 0) { nextStep = lastStep; }
+            else{
+                nextStep = directions.get(0);
+                directions.remove(0);
+            }
+
             if(nextStep != -1){
                 player.getSteps().add(nextStep);
                 lastStep = nextStep;
@@ -93,11 +101,11 @@ public class GameMapSingle extends GameMapBase{
     }
 
     private boolean check_valid(Cell cell){ // 判断下一步是否合法;
-        return g[cell.getX()][cell.getY()] != 1 && g[cell.getX()][cell.getY()] != 3;
+        if(cell.getX() < 0 || cell.getX() >= super.rows || cell.getY() < 0 || cell.getY() >= super.cols) return false;
+        return g[cell.getX()][cell.getY()] != 1 && g[cell.getX()][cell.getY()] != 2;
     }
 
     private boolean check_food(Cell cell){ // 判断是否吃到食物;
-        System.out.println(cell + " " + food + " " + g[food.getX()][food.getY()]);
         if(checkEatFood(cell)){
             destroyFood();
             placeFood();
@@ -109,6 +117,7 @@ public class GameMapSingle extends GameMapBase{
 
     private void judge(){ // 判断下一步操作结果;
         Cell addCell = player.addCell(nextStep);
+
         boolean valid = check_valid(addCell);
         if(!valid){
             status = "finish";
@@ -117,8 +126,7 @@ public class GameMapSingle extends GameMapBase{
 
         boolean creasing = check_food(addCell);
 
-
-        this.g[addCell.getX()][addCell.getY()] = 3;
+        this.g[addCell.getX()][addCell.getY()] = 2;
         if(!creasing){
             Cell removeCell = player.removeCell();
             this.g[removeCell.getX()][removeCell.getY()] = 0;
@@ -145,38 +153,21 @@ public class GameMapSingle extends GameMapBase{
 
     private void sendResult(){ // 公布结果;
         JSONObject object = new JSONObject();
-        object.put("event", "result");
+        object.put("event", "result-single");
         object.put("score", player.getScore());
         WebSocketServer.users.get(player.getId()).SendMessage(object.toJSONString());
     }
 
-    public void get_run(){
-//        System.out.println("!");
-        run();
-    }
-
     @Override
     public void run() {
-//        while (true){
-//            Thread.sleep(200);
-            if(getNextStep()){
-                System.out.println("run " + nextStep);
-//                try {
-//                    Thread.sleep(200);
-                    judge();
-                    if("playing".equals(status)){
-                        sendMove();
-                    }else{
-                        sendResult();
-//                        break;
-                    }
-                    nextStep = -1;
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-
-//            }
+        if(getNextStep()){
+            judge();
+            if("playing".equals(status)){
+                sendMove();
+            }else{
+                sendResult();
+            }
+            nextStep = -1;
         }
     }
-
 }

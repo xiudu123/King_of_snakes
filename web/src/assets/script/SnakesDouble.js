@@ -2,6 +2,7 @@ import { Snakes } from "./Snakes";
 export class SnakesDouble extends Snakes{
     constructor(info, gamemap){
         super(info, gamemap);
+        this.increasing = false;
     }
 
     check_tail_increasing(){
@@ -10,6 +11,9 @@ export class SnakesDouble extends Snakes{
         return false;
     }
 
+    set_increasing(increasing){
+        this.increasing = increasing;
+    }
     
     update_snakes(){
         

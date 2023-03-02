@@ -22,7 +22,6 @@ export class AcGameObject {
 
     destory(){
         this.on_destory();
-        console.log("~!", AC_GAME_OBJECTS);
         for(let i in AC_GAME_OBJECTS){
             const obj = AC_GAME_OBJECTS[i];
             if(obj === this){

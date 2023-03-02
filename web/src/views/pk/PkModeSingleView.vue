@@ -35,9 +35,14 @@ export default{
             socket.onmessage = msg => { // 当成功接受信息时执行;
                 const data = JSON.parse(msg.data);
                 console.log("receive message!");
-                console.log(data);
+
+                const game = store.state.pkSingle.gameObjectSingle;
                 if(data.event === "start-game-single"){
-                    store.commit("updateGamemapSingle", data.game_map);
+                    store.commit("updateGamemapSingle", {
+                        game_map: data.game_map,
+                        rows: data.rows,
+                        cols: data.cols,
+                    });
                     store.commit("updateLocation", {
                         sx: data.sx,
                         sy: data.sy,
@@ -51,14 +56,17 @@ export default{
                         store.commit("updateStatusSingle", "playing");
                     }, 200);
                 }else if(data.event === "move-single"){
-                    store.commit("updateDirection", data.direction);
+                    game.snake.set_diretion(data.direction);
                     store.commit("setScore", data.score);
                     store.commit("updateFood", {
                         food_x: data.food_x,
                         food_y: data.food_y,
                     });
-                    console.log(store.state.pkSingle.food_x, store.state.pkSingle.food_y);
                     store.commit("updateIncreasing", data.increasing);
+                }else if(data.event === "result-single"){
+                    store.commit("updateStatusSingle", "finish");
+                    
+                    game.snake.status = "die";
                 }
                 
             },

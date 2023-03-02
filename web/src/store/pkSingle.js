@@ -4,12 +4,14 @@ export default ({
         socket: "",
         status: "await",
         gamme_map: null,
+        map_rows: 13,
+        map_cols: 14,
         sx: 0,
         sy: 0,
         food_x: 0,
         food_y: 0,
-        direction: -1,
         increasing: false,
+        gameObjectSingle: null,
     },
     getters: {
     },
@@ -23,8 +25,10 @@ export default ({
         setScore(state, score){
             state.score = score;  
         },
-        updateGamemapSingle(state, game_map){
-            state.game_map = game_map;
+        updateGamemapSingle(state, map){
+            state.game_map = map.game_map;
+            state.map_rows = map.rows;
+            state.map_cols = map.cols;
         },
         updateStatusSingle(state, status){
             state.status = status;
@@ -37,11 +41,11 @@ export default ({
             state.food_x = food.food_x;
             state.food_y = food.food_y;
         },
-        updateDirection(state, direction){
-            state.direction = direction;
-        },
         updateIncreasing(state, increasing){
             state.increasing = increasing;
+        },
+        updateGameObjectSingle(state, gameObjectSingle){
+            state.gameObjectSingle = gameObjectSingle;
         },
     },
     actions: {

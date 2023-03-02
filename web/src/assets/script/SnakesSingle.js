@@ -13,11 +13,6 @@ export class SnakesSingle extends Snakes{
             return true;
         }
         return false;
-        // if(this.eat_food){
-        //     this.eat_food = false;
-        //     return true;
-        // }
-        // return false;
     }
 
     update_snakes(){
