@@ -10,12 +10,14 @@ public class GameDouble {
     private GameMapDouble gameMapDouble;
     User user;
 
-    public void sendStartMessage(User playerA, User playerB){
+    public void sendStartMessage(User playerA, User playerB, int idA, int idB){
         JSONObject resp = new JSONObject();
         resp.put("event", "start-matching-double");
         resp.put("opponent_username", playerB.getUsername());
         resp.put("opponent_photo", playerB.getPhoto());
         resp.put("game_map", gameMapDouble.getG());
+        resp.put("a_id", idA);
+        resp.put("b_id", idB);
         WebSocketServer.users.get(playerA.getId()).SendMessage(resp.toJSONString());
     }
 
@@ -57,8 +59,8 @@ public class GameDouble {
             gameMapDouble.start();
             WebSocketServer.users.get(playerA.getId()).gameDouble.gameMapDouble = gameMapDouble;
             WebSocketServer.users.get(playerB.getId()).gameDouble.gameMapDouble = gameMapDouble;
-            WebSocketServer.users.get(playerA.getId()).gameDouble.sendStartMessage(playerA, playerB);
-            WebSocketServer.users.get(playerB.getId()).gameDouble.sendStartMessage(playerB, playerA);
+            WebSocketServer.users.get(playerA.getId()).gameDouble.sendStartMessage(playerA, playerB, playerA.getId(), playerB.getId());
+            WebSocketServer.users.get(playerB.getId()).gameDouble.sendStartMessage(playerB, playerA, playerA.getId(), playerB.getId());
     }
 
 

@@ -5,17 +5,20 @@
         <div class="score-num" >分数： {{ $store.state.pkSingle.score}}</div>
     </div>
     <PlayGround v-if="$store.state.pkSingle.status !== 'await'" />
+    <ResultBoardSingle v-if="$store.state.pkSingle.status === 'finish' " />
 </template>
 
 <script>
 import PlayGround from "@/components/PlayGround.vue"
 import MatchSingle from "@/components/MatchSingle.vue"
+import ResultBoardSingle from "@/components/ResultBoardSingle.vue";
 import { useStore } from "vuex";
 import { onBeforeMount, onBeforeUnmount } from "vue";
 export default{
     components: {
         PlayGround,
         MatchSingle,
+        ResultBoardSingle,
     },
 
     setup() {

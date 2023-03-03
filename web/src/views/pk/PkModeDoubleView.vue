@@ -1,17 +1,20 @@
 <template>
     <MatchGround v-if="$store.state.pkDouble.status === 'matching' " />
     <PlayGround v-else-if="$store.state.pkDouble.status === 'playing' "/>
+    <ResultBoardDoubleVue v-if="$store.state.pkDouble.loser !== 'none' " />
 </template>
 
 <script>
 import PlayGround from "@/components/PlayGround.vue"
 import MatchGround from "@/components/MatchGround.vue"
+import ResultBoardDoubleVue from "@/components/ResultBoardDouble.vue"
 import { onBeforeMount, onBeforeUnmount } from "vue";
 import { useStore } from "vuex";
 export default{
     components: {
         PlayGround,
         MatchGround,
+        ResultBoardDoubleVue,
     },
 
     setup() {
@@ -36,7 +39,6 @@ export default{
                 const data = JSON.parse(msg.data);
                 console.log("receive message!");
                 const game = store.state.pkDouble.gameObjectDouble;
-                console.log(data);
                 if(data.event === "start-matching-double"){
                     store.commit("updateOpponent", {
                         username: data.opponent_username,
@@ -44,6 +46,8 @@ export default{
                     });
                     store.commit("updateGame", {
                         game_map: data.game_map,
+                        a_id: data.a_id,
+                        b_id: data.b_id,
                     });
                     // store.commit("updateStatus", "wait");
                     setTimeout(() => {

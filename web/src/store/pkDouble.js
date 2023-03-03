@@ -6,7 +6,9 @@ export default ({
         status: "matching",
         game_map: null,
         gameObjectDouble: null,
-        loser: "",
+        loser: "none",
+        a_id: 0,
+        b_id: 0,
     },
     getters: {
         
@@ -24,6 +26,8 @@ export default ({
         },
         updateGame(state, game){
             state.game_map = game.game_map;
+            state.a_id = game.a_id;
+            state.b_id = game.b_id;
         },
         updateGameObjectDouble(state, gameObjectDouble){
             state.gameObjectDouble = gameObjectDouble;
