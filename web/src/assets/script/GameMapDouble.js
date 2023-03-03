@@ -6,7 +6,8 @@ export class GameMapDouble extends GameMap {
     constructor(ctx, parent, store){
         super(ctx, parent);
         this.store = store;
-
+        this.rows = store.state.pkDouble.map_rows;
+        this.cols = store.state.pkDouble.map_cols;
         this.snakes = [
             new SnakesDouble({id: 0, color: "#4876ec", r: this.rows - 2, c: 1, eye_direction: 0}, this),
             new SnakesDouble({id: 1, color: "#f94848", r: 1, c: this.cols - 2, eye_direction: 2}, this),

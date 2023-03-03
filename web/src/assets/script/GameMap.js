@@ -7,7 +7,7 @@ export class GameMap extends AcGameObject{
         this.parent = parent;
         this.L = 0;
 
-        this.rows = 13, this.cols = 14;
+        this.rows = 0, this.cols = 0;
         this.walls = [];
         this.g = [[]];
     }
@@ -24,8 +24,6 @@ export class GameMap extends AcGameObject{
         this.start_gamemap();
         this.render_walls();
     }
-
-
 
     update(){
         this.update_size();

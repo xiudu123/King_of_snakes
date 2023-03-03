@@ -1,6 +1,6 @@
 <template>
     <MatchGround v-if="$store.state.pkDouble.status === 'matching' " />
-    <PlayGround v-else-if="$store.state.pkDouble.status === 'playing' "/>
+    <PlayGround v-else-if="$store.state.pkDouble.status === 'playing' || $store.state.pkDouble.status === 'wait'"/>
     <ResultBoardDoubleVue v-if="$store.state.pkDouble.loser !== 'none' " />
 </template>
 
@@ -48,8 +48,10 @@ export default{
                         game_map: data.game_map,
                         a_id: data.a_id,
                         b_id: data.b_id,
+                        rows: data.rows,
+                        cols: data.cols,
                     });
-                    // store.commit("updateStatus", "wait");
+                    store.commit("updateStatus", "wait");
                     setTimeout(() => {
                         store.commit("updateStatus", "playing");
                     }, 2000);
