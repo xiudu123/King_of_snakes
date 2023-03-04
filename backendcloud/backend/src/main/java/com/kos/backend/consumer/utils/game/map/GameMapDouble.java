@@ -4,13 +4,23 @@ import com.alibaba.fastjson2.JSONObject;
 import com.kos.backend.consumer.WebSocketServer;
 import com.kos.backend.consumer.utils.game.Cell;
 import com.kos.backend.consumer.utils.game.player.PlayerDouble;
+import com.kos.backend.mapper.game.GameDoubleMapper;
+import com.kos.backend.mapper.game.PlayerMapper;
+import com.kos.backend.pojo.game.GameDouble;
+import com.kos.backend.pojo.game.Player;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.locks.ReentrantLock;
 
+@Component
+@NoArgsConstructor
 public class GameMapDouble extends GameMapBase {
-    private final Integer inner_walls_count;
+    private Integer inner_walls_count = 0;
     private final static int[][] dir = {
             {-1, 0}, // 上;
             {0, 1}, // 右;
@@ -19,11 +29,25 @@ public class GameMapDouble extends GameMapBase {
     };
     Random random = new Random();
     private final ReentrantLock lock = new ReentrantLock();
-    private final PlayerDouble playerA, playerB;
+    private PlayerDouble playerA = null;
+    private PlayerDouble playerB = null;
     private Integer nextStepA = null;
     private Integer nextStepB = null;
     private String status = "playing";
     private String loser;
+    private static PlayerMapper playerDoubleMapper;
+    private static GameDoubleMapper gameDoubleMapper;
+
+    @Autowired
+    public void setPlayerDoubleMapper(PlayerMapper playerDoubleMapper) {
+        GameMapDouble.playerDoubleMapper = playerDoubleMapper;
+    }
+
+    @Autowired
+    public void setGameDoubleMapper(GameDoubleMapper gameDoubleMapper){
+        GameMapDouble.gameDoubleMapper = gameDoubleMapper;
+    }
+
     public GameMapDouble(Integer idA, Integer idB, Integer rows, Integer cols) {
         super(rows, cols);
 
@@ -182,6 +206,21 @@ public class GameMapDouble extends GameMapBase {
         sendAllMessage(object.toJSONString());
     }
 
+    void saveRecord(){
+        System.out.println("save record");
+        Player A = new Player(null, playerA.getId(), playerA.getSx(), playerA.getSy(), playerA.getStringSteps(), playerA.getStringIncreasing());
+        Player B = new Player(null, playerB.getId(), playerB.getSx(), playerB.getSy(), playerB.getStringSteps(), playerB.getStringIncreasing());
+        GameMapDouble.playerDoubleMapper.insert(A);
+        GameMapDouble.playerDoubleMapper.insert(B);
+        GameDouble gameDouble = new GameDouble(null, A.getId(), B.getId(), getStringG(), loser, new Date());
+        GameMapDouble.gameDoubleMapper.insert(gameDouble);
+    }
+
+    void endGame(){
+        sendResult();
+        saveRecord();
+    }
+
     @Override
     public void run() {
         for(int i = 0; i < 1000; ++ i){
@@ -190,7 +229,7 @@ public class GameMapDouble extends GameMapBase {
                 if("playing".equals(status)){
                     sendMove();
                 }else{
-                    sendResult();
+                    endGame();
                     break;
                 }
             }else{
@@ -204,7 +243,7 @@ public class GameMapDouble extends GameMapBase {
                 }finally {
                     lock.unlock();
                 }
-                sendResult();
+                endGame();
                 break;
             }
         }

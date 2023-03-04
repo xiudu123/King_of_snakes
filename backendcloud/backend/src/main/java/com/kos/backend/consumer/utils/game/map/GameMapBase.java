@@ -1,9 +1,14 @@
 package com.kos.backend.consumer.utils.game.map;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class GameMapBase extends Thread{
-    protected final Integer rows;
-    protected final Integer cols;
-    protected final int[][] g;
+    protected Integer rows;
+    protected Integer cols;
+    protected int[][] g;
+
+
 
     GameMapBase(Integer rows, Integer cols){
         this.rows = rows;
@@ -19,6 +24,16 @@ public class GameMapBase extends Thread{
         }
         for(int r = 0; r < this.rows; ++ r) this.g[r][0] = this.g[r][this.cols - 1] = 1;
         for(int c = 0; c < this.cols; ++ c) this.g[0][c] = this.g[this.rows - 1][c] = 1;
+    }
+
+    protected String getStringG(){
+        StringBuilder res = new StringBuilder();
+        for(int i = 0; i < rows; ++ i){
+            for(int j = 0; j < cols; ++ j){
+                res.append(g[i][j]);
+            }
+        }
+        return res.toString();
     }
 
 }

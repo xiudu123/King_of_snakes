@@ -49,6 +49,7 @@ public class GameDouble {
     }
 
     public void stopMatching(){
+        if(user == null) return;
         MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
         data.add("user_id", user.getId().toString());
         restTemplate.postForObject(removePlayerUrl, data, String.class);
@@ -65,7 +66,7 @@ public class GameDouble {
     }
 
     public static void startGame(Integer aId, Integer bId){
-        Integer rows = 13, cols = 14;
+        int rows = 13, cols = 14;
         User playerA = userMapper.selectById(aId), playerB = userMapper.selectById(bId);
         GameMapDouble gameMapDouble = new GameMapDouble(playerA.getId(), playerB.getId(), rows, cols);
         gameMapDouble.createMap();

@@ -6,9 +6,7 @@ export class SnakesDouble extends Snakes{
     }
 
     check_tail_increasing(){
-        if(this.step <= 10) return true;
-        if(this.step % 3 === 1) return true;
-        return false;
+        return this.increasing;
     }
 
     set_increasing(increasing){

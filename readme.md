@@ -16,3 +16,15 @@
 >   * 在微服务的父级目录的 `pom` 添加 `<packaging>pom</packaging>` 和 `spring-cloud-dependencies` 依赖
 >   * 后端进程间用 `RestTemplate`进行通信
 >   * 微服务用 `SpringCloud` 来实现，但由于这个项目的并发量不大，所有跟 `SpingCloud` 的直接关系不是很大，很多东西都没用上
+
+>2023/3/5/ 0:54
+> 保存对局记录
+> 实现功能： 将个人模式和双人模式的每局的对局记录保存于数据库中
+> + 注意事项：
+>   * `@Component` 注解的地方需要有无参构造函数
+> + 遇到的问题：
+>   * `@Component`注解到了只有有参构造函数的类导致报错
+>> <font style="font-style: italic">
+>> Annoyance:<br>
+>> 今天打了ucup，人麻了
+>> </font>

@@ -4,21 +4,43 @@ import com.alibaba.fastjson2.JSONObject;
 import com.kos.backend.consumer.WebSocketServer;
 import com.kos.backend.consumer.utils.game.Cell;
 import com.kos.backend.consumer.utils.game.player.PlayerSingle;
+import com.kos.backend.mapper.game.GameSingleMapper;
+import com.kos.backend.mapper.game.PlayerMapper;
+import com.kos.backend.pojo.game.GameSingle;
+import com.kos.backend.pojo.game.Player;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.locks.ReentrantLock;
 
+@Component
+@NoArgsConstructor
 public class GameMapSingle extends GameMapBase{
-    private Cell food;
-    private final PlayerSingle player;
+    private Cell food = null;
+    private PlayerSingle player = null;
     private Integer nextStep = -1;
     private Integer lastStep = -1;
     private final ReentrantLock lock = new ReentrantLock();
     private String status = "playing";
     private final Random random = new Random();
     private final List<Integer> directions = new ArrayList<>();
+
+    private static PlayerMapper playerMapper;
+    private static GameSingleMapper gameSingleMapper;
+    @Autowired
+    private void setPlayerMapper(PlayerMapper playerMapper){
+        GameMapSingle.playerMapper = playerMapper;
+    }
+    @Autowired
+    private void setGameSingleMapper(GameSingleMapper gameSingleMapper){
+        GameMapSingle.gameSingleMapper = gameSingleMapper;
+    }
+
     public GameMapSingle(Integer id, Integer rows, Integer cols) {
         super(rows, cols);
 
@@ -132,6 +154,13 @@ public class GameMapSingle extends GameMapBase{
             this.g[removeCell.getX()][removeCell.getY()] = 0;
         }
         player.getCheckIncreasing().add(creasing);
+        if(food != null){
+            player.getFoodX().add(food.getX());
+            player.getFoodY().add(food.getY());
+        }else{
+            player.getFoodX().add(0);
+            player.getFoodY().add(0);
+        }
     }
 
     private void sendMove(){ // 传递移动信息;
@@ -158,6 +187,18 @@ public class GameMapSingle extends GameMapBase{
         WebSocketServer.users.get(player.getId()).SendMessage(object.toJSONString());
     }
 
+    private void saveRecord(){
+        Player user = new Player(null, player.getId(), player.getSx(), player.getSy(), player.getStringSteps(), player.getStringIncreasing());
+        playerMapper.insert(user);
+        GameSingle gameSingle = new GameSingle(null, user.getId(), getStringG(), player.getStringFoodX(), player.getStringFoodY(), new Date());
+        gameSingleMapper.insert(gameSingle);
+    }
+
+    void endGame(){
+        sendResult();
+        saveRecord();
+    }
+
     @Override
     public void run() {
         if(getNextStep()){
@@ -165,7 +206,7 @@ public class GameMapSingle extends GameMapBase{
             if("playing".equals(status)){
                 sendMove();
             }else{
-                sendResult();
+                endGame();
             }
             nextStep = -1;
         }
