@@ -18,4 +18,5 @@ public class Player {
     private Integer sy;
     private String steps;
     private String increasing;
+    private String type;
 }

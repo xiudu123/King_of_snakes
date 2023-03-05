@@ -4,9 +4,11 @@ import com.alibaba.fastjson2.JSONObject;
 import com.kos.backend.consumer.WebSocketServer;
 import com.kos.backend.consumer.utils.game.Cell;
 import com.kos.backend.consumer.utils.game.player.PlayerSingle;
-import com.kos.backend.mapper.game.GameSingleMapper;
+import com.kos.backend.mapper.UserMapper;
+import com.kos.backend.mapper.game.RecordSingleMapper;
 import com.kos.backend.mapper.game.PlayerMapper;
-import com.kos.backend.pojo.game.GameSingle;
+import com.kos.backend.pojo.User;
+import com.kos.backend.pojo.game.RecordSingle;
 import com.kos.backend.pojo.game.Player;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,14 +33,19 @@ public class GameMapSingle extends GameMapBase{
     private final List<Integer> directions = new ArrayList<>();
 
     private static PlayerMapper playerMapper;
-    private static GameSingleMapper gameSingleMapper;
+    private static RecordSingleMapper recordSingleMapper;
+    private static UserMapper userMapper;
     @Autowired
     private void setPlayerMapper(PlayerMapper playerMapper){
         GameMapSingle.playerMapper = playerMapper;
     }
     @Autowired
-    private void setGameSingleMapper(GameSingleMapper gameSingleMapper){
-        GameMapSingle.gameSingleMapper = gameSingleMapper;
+    private void setGameSingleMapper(RecordSingleMapper recordSingleMapper){
+        GameMapSingle.recordSingleMapper = recordSingleMapper;
+    }
+    @Autowired
+    private void setUserMapper(UserMapper userMapper){
+        GameMapSingle.userMapper = userMapper;
     }
 
     public GameMapSingle(Integer id, Integer rows, Integer cols) {
@@ -187,11 +194,18 @@ public class GameMapSingle extends GameMapBase{
         WebSocketServer.users.get(player.getId()).SendMessage(object.toJSONString());
     }
 
+    private void updateScore(Player player, Integer score){
+        User user = userMapper.selectById(player.getUserId());
+        user.setScores(score);
+        userMapper.updateById(user);
+    }
+
     private void saveRecord(){
-        Player user = new Player(null, player.getId(), player.getSx(), player.getSy(), player.getStringSteps(), player.getStringIncreasing());
+        Player user = new Player(null, player.getId(), player.getSx(), player.getSy(), player.getStringSteps(), player.getStringIncreasing(), "single");
         playerMapper.insert(user);
-        GameSingle gameSingle = new GameSingle(null, user.getId(), getStringG(), player.getStringFoodX(), player.getStringFoodY(), new Date());
-        gameSingleMapper.insert(gameSingle);
+        RecordSingle gameSingle = new RecordSingle(null, user.getId(), getStringG(), player.getStringFoodX(), player.getStringFoodY(), player.getId(), player.getScore(), new Date());
+        recordSingleMapper.insert(gameSingle);
+        updateScore(user, player.getScore());
     }
 
     void endGame(){

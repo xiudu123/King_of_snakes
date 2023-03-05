@@ -1,8 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeIndexView from "@/views/home/HomeIndexView"
 import PkIndexView from "@/views/pk/PkIndexView"
-import RanklistIndexView from "@/views/ranklist/RanklistIndexView"
-import RecordIndexView from "@/views/record/RecordIndexView"
+import RanklistSingleView from "@/views/ranklist/RanklistSingleView"
+import RanklistDoubleView from "@/views/ranklist/RanklistDoubleView"
+import RecordDoubleView from "@/views/record/RecordDoubleView"
+import RecordSingleView from "@/views/record/RecordSingleView"
 import UserSpaceIndexView from "@/views/user/space/UserSpaceIndexView"
 import NotFound from "@/views/error/NotFound"
 import PkModeSingleView from "@/views/pk/PkModeSingleView"
@@ -57,18 +59,50 @@ const routes = [
   {
       path: "/ranklist/",
       name: "ranklist_index",
-      component: RanklistIndexView,
+      component: RanklistSingleView,
       meta: {
         requestAuth: true,
       }
   },
   {
+    path: "/ranklist/single/",
+    name: "ranklist_single",
+    component: RanklistSingleView,
+    meta: {
+      requestAuth: true,
+    }
+  },
+  {
+    path: "/ranklist/double/",
+    name: "ranklist_double",
+    component: RanklistDoubleView,
+    meta: {
+      requestAuth: true,
+    }
+  },
+  {
       path: "/record/",
       name: "record_index",
-      component: RecordIndexView,
+      component: RecordSingleView,
       meta: {
         requestAuth: true,
       }
+  },
+  {
+    path: "/record/double/",
+    name: "record_double",
+    component: RecordDoubleView,
+    meta: {
+      requestAuth: true,
+    }
+  },
+  {
+    path: "/record/single/",
+    name: "record_single",
+    component: RecordSingleView,
+    meta: {
+      requestAuth: true,
+    }
   },
   {
     path: "/user/space/",

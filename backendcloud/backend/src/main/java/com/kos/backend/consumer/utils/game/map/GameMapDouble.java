@@ -4,9 +4,11 @@ import com.alibaba.fastjson2.JSONObject;
 import com.kos.backend.consumer.WebSocketServer;
 import com.kos.backend.consumer.utils.game.Cell;
 import com.kos.backend.consumer.utils.game.player.PlayerDouble;
-import com.kos.backend.mapper.game.GameDoubleMapper;
+import com.kos.backend.mapper.UserMapper;
+import com.kos.backend.mapper.game.RecordDoubleMapper;
 import com.kos.backend.mapper.game.PlayerMapper;
-import com.kos.backend.pojo.game.GameDouble;
+import com.kos.backend.pojo.User;
+import com.kos.backend.pojo.game.RecordDouble;
 import com.kos.backend.pojo.game.Player;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,16 +38,21 @@ public class GameMapDouble extends GameMapBase {
     private String status = "playing";
     private String loser;
     private static PlayerMapper playerDoubleMapper;
-    private static GameDoubleMapper gameDoubleMapper;
-
+    private static RecordDoubleMapper recordDoubleMapper;
+    private static UserMapper userMapper;
     @Autowired
     public void setPlayerDoubleMapper(PlayerMapper playerDoubleMapper) {
         GameMapDouble.playerDoubleMapper = playerDoubleMapper;
     }
 
     @Autowired
-    public void setGameDoubleMapper(GameDoubleMapper gameDoubleMapper){
-        GameMapDouble.gameDoubleMapper = gameDoubleMapper;
+    public void setGameDoubleMapper(RecordDoubleMapper recordDoubleMapper){
+        GameMapDouble.recordDoubleMapper = recordDoubleMapper;
+    }
+
+    @Autowired
+    public void setUserMapper(UserMapper userMapper){
+        GameMapDouble.userMapper = userMapper;
     }
 
     public GameMapDouble(Integer idA, Integer idB, Integer rows, Integer cols) {
@@ -206,14 +213,32 @@ public class GameMapDouble extends GameMapBase {
         sendAllMessage(object.toJSONString());
     }
 
+    void updateRating(Player player, Integer rating){
+        User user = userMapper.selectById(player.getUserId());
+        user.setRating(rating);
+        userMapper.updateById(user);
+    }
+
     void saveRecord(){
         System.out.println("save record");
-        Player A = new Player(null, playerA.getId(), playerA.getSx(), playerA.getSy(), playerA.getStringSteps(), playerA.getStringIncreasing());
-        Player B = new Player(null, playerB.getId(), playerB.getSx(), playerB.getSy(), playerB.getStringSteps(), playerB.getStringIncreasing());
+        Player A = new Player(null, playerA.getId(), playerA.getSx(), playerA.getSy(), playerA.getStringSteps(), playerA.getStringIncreasing(), "double");
+        Player B = new Player(null, playerB.getId(), playerB.getSx(), playerB.getSy(), playerB.getStringSteps(), playerB.getStringIncreasing(), "double");
         GameMapDouble.playerDoubleMapper.insert(A);
         GameMapDouble.playerDoubleMapper.insert(B);
-        GameDouble gameDouble = new GameDouble(null, A.getId(), B.getId(), getStringG(), loser, new Date());
-        GameMapDouble.gameDoubleMapper.insert(gameDouble);
+        RecordDouble gameDouble = new RecordDouble(null, A.getId(), B.getId(), getStringG(), loser, playerA.getId(), playerB.getId(), new Date());
+        GameMapDouble.recordDoubleMapper.insert(gameDouble);
+
+        Integer ratingA = userMapper.selectById(playerA.getId()).getRating();
+        Integer ratingB = userMapper.selectById(playerB.getId()).getRating();
+        if("A".equals(loser)) {
+            ratingA -= 2;
+            ratingB += 5;
+        }else if("B".equals(loser)){
+            ratingA += 5;
+            ratingB -= 2;
+        }
+        updateRating(A, ratingA);
+        updateRating(B, ratingB);
     }
 
     void endGame(){

@@ -1,5 +1,5 @@
 <template>
-    <UserSpaceBase>
+    <RecordBase>
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
@@ -30,24 +30,24 @@
                 </tr>
             </tbody>
         </table>
-    </UserSpaceBase>
+    </RecordBase>
 </template>
 
 <script>
-import UserSpaceBase from "@/components/UserSpaceBase.vue"
+import RecordBase from "@/components/RecordBase.vue"
 import $ from "jquery"
 import { useStore } from "vuex"
 import { ref } from "vue"
 export default{
     components: {
-        UserSpaceBase,
+        RecordBase,
     },
     setup() {
         const store = useStore();
         let records = ref([]);
         const pull = () => {
             $.ajax({
-                url: "http://127.0.0.1:3000/record/double/get/user/",
+                url: "http://127.0.0.1:3000/record/double/get/all/",
                 type: "get",
                 headers:{
                     Authorization: "Bearer " + store.state.user.token,

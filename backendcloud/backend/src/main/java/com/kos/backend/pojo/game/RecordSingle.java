@@ -12,13 +12,16 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GameDouble {
+public class RecordSingle {
     @TableId(type = IdType.AUTO)
     private Integer id;
-    private Integer playerAId;
-    private Integer playerBId;
+    private Integer playerId;
     private String map;
-    private String loser;
+    private String foodX;
+    private String foodY;
+    private Integer userId;
+    private Integer score;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private Date createTime;
+
 }
