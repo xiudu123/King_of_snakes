@@ -1,9 +1,9 @@
 package com.kos.backend.service.ranklist;
 
-import com.kos.backend.pojo.User;
+import com.alibaba.fastjson2.JSONObject;
 
-import java.util.List;
+import java.util.Map;
 
 public interface GetRankListDoubleService {
-    List<User> getRankListDouble();
+    JSONObject getRankListDouble(Map<String, String> data);
 }

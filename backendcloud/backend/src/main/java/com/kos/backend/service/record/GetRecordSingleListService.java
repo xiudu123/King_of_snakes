@@ -2,9 +2,10 @@ package com.kos.backend.service.record;
 
 import com.alibaba.fastjson2.JSONObject;
 
-import java.util.List;
+import java.util.Map;
+
 
 public interface GetRecordSingleListService {
-    List<JSONObject> getRecordSingleList();
-    List<JSONObject> getRecordSingleListAll();
+    JSONObject getRecordSingleList(Map<String, String> data);
+    JSONObject getRecordSingleListAll(Map<String, String> data);
 }

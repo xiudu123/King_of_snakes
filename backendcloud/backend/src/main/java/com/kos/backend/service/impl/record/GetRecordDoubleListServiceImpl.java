@@ -2,6 +2,8 @@ package com.kos.backend.service.impl.record;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.kos.backend.mapper.UserMapper;
 import com.kos.backend.mapper.game.PlayerMapper;
 import com.kos.backend.mapper.game.RecordDoubleMapper;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class GetRecordDoubleListServiceImpl implements GetRecordDoubleListService {
@@ -27,27 +30,31 @@ public class GetRecordDoubleListServiceImpl implements GetRecordDoubleListServic
     private UserMapper userMapper;
 
     @Override
-    public List<JSONObject> getRecordDoubleListAll() {
+    public JSONObject getRecordDoubleListAll(Map<String, String> data) {
+        int page = Integer.parseInt(data.get("page"));
         QueryWrapper<RecordDouble> queryWrapper = new QueryWrapper<>();
         queryWrapper.orderByDesc("create_time");
-        return getRecords(queryWrapper);
+        return getRecords(page, queryWrapper);
     }
 
     @Override
-    public List<JSONObject> getRecordDoubleList() {
+    public JSONObject getRecordDoubleList(Map<String, String> data) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl loginUser = (UserDetailsImpl) authenticationToken.getPrincipal();
         User user = loginUser.getUser();
 
+        int page = Integer.parseInt(data.get("page"));
         QueryWrapper<RecordDouble> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_a_id", user.getId()).or().eq("user_b_id", user.getId());
         queryWrapper.orderByDesc("create_time");
-        return getRecords(queryWrapper);
+        return getRecords(page, queryWrapper);
     }
 
-    private List<JSONObject> getRecords(QueryWrapper<RecordDouble> queryWrapper){
-        List<RecordDouble> records = recordDoubleMapper.selectList(queryWrapper);
+    private JSONObject getRecords(int page, QueryWrapper<RecordDouble> queryWrapper){
+        int pageSize = 3;
+        IPage<RecordDouble> recordDoubleIPage = new Page<>(page, pageSize);
+        List<RecordDouble> records = recordDoubleMapper.selectPage(recordDoubleIPage, queryWrapper).getRecords();
         List<JSONObject> items = new ArrayList<>();
         for(RecordDouble record : records){
             User A = userMapper.selectById(record.getUserAId());
@@ -64,7 +71,11 @@ public class GetRecordDoubleListServiceImpl implements GetRecordDoubleListServic
             item.put("record", record);
             items.add(item);
         }
-        return items;
+        JSONObject resp = new JSONObject();
+        resp.put("records", items);
+        resp.put("records_count", recordDoubleMapper.selectCount(null));
+        resp.put("page_size", pageSize);
+        return resp;
     }
 
 }
